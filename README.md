@@ -11,13 +11,13 @@ CSL Version: [`12.1.0`](https://www.npmjs.com/package/@emurgo/cardano-serializat
 In this example, we show [CIP-1852 HD derivation](https://github.com/cardano-foundation/CIPs/tree/master/CIP-1852) of all keys.
 Further, we show how these keys can be used to create addresses and DRep IDs.
 
-### [CIP-0008 Message Signing](./examples/CIP-0008/cip-0008-signing.js)
+### [CIP-0008 Message Signing - Example](./examples/CIP-0008/cip-8-signing.js)
 
-WIP
+In this example, we show an implementation of [CIP-0008 Message Signing](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0008).
 
-### [CIP-105 Conway Era Keys - Test Vectors](./examples/CIP-105/cip-105-test-vectors.js)
+### [CIP-105 Conway Era Keys - Test Vectors](./examples/CIP-0105/cip-105-test-vectors.js)
 
-In this example we make extensive test vectors for [CIP-105](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0105).
+In this example we make extensive test vectors for [CIP-105 | Conway era key chains](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0105).
 
 ## To run examples
 
@@ -42,5 +42,5 @@ npm install
 Run a example.
 
 ```shell
-node examples/cip-1852-keys.js
+node examples/CIP-1852/cip-1852-keys.js
 ```
