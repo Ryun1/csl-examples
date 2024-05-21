@@ -11,7 +11,7 @@
   "type": "module",
   "dependencies": {
     "@emurgo/cardano-message-signing-nodejs": "^1.0.1",
-    "@emurgo/cardano-serialization-lib-nodejs": "^12.0.0-alpha.19",
+    "@emurgo/cardano-serialization-lib-nodejs": "^12.0.0-alpha.29",
     "bip39": "^3.1.0"
   }
 }
