@@ -13,9 +13,11 @@ Further, we show how these keys can be used to create addresses and DRep IDs.
 
 ### [CIP-08 Message Signing](./examples/cip-0008-signing.js)
 
+In this example, we show an implementation of [CIP-0008 Message Signing](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0008).
 
 ### [CIP-105 Conway Era Keys](./examples/cip-0105-conway-keys.js)
 
+todo
 
 ## To run examples
 
