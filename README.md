@@ -13,16 +13,18 @@ Further, we show how these keys can be used to create addresses and DRep IDs.
 
 ### [CIP-08 Message Signing](./examples/cip-0008-signing.js)
 
+WIP
 
-### [CIP-105 Conway Era Keys](./examples/cip-0105-conway-keys.js)
+### [CIP-105 Conway Era Keys](./examples/cip-105-test-vectors.js)
 
+In this example we make extensive test vectors for CIP-105.
 
 ## To run examples
 
 Clone the repository.
 
 ```shell
-git clone
+git clone https://github.com/Ryun1/csl-examples.git
 ```
 
 Navigate to directory.
