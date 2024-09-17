@@ -11,6 +11,7 @@ import {
 const entropy = '00000000000000000000000000000000';
 const mnemonic = entropyToMnemonic(entropy);
 const accountIndex = 0;
+const keyIndex = 0;
 const networkTag = 0;
 
 // ########### Keys ###########
@@ -37,11 +38,11 @@ const accountKey = rootKey.derive(harden(1852)) // purpose
 
 // Private keys
 // derive role and address index
-const paymentPrivKey = accountKey.derive(0).derive(0).to_raw_key();
-const stakePrivKey = accountKey.derive(2).derive(0).to_raw_key();
-const dRepPrivKey = accountKey.derive(3).derive(0).to_raw_key();
-const ccColdPrivKey = accountKey.derive(4).derive(0).to_raw_key();
-const ccHotPrivKey = accountKey.derive(5).derive(0).to_raw_key();
+const paymentPrivKey = accountKey.derive(0).derive(keyIndex).to_raw_key();
+const stakePrivKey = accountKey.derive(2).derive(keyIndex).to_raw_key();
+const dRepPrivKey = accountKey.derive(3).derive(keyIndex).to_raw_key();
+const ccColdPrivKey = accountKey.derive(4).derive(keyIndex).to_raw_key();
+const ccHotPrivKey = accountKey.derive(5).derive(keyIndex).to_raw_key();
 
 // Create public keys from private keys
 const paymentPubKey = paymentPrivKey.to_public();
