@@ -33,6 +33,12 @@ Navigate to directory.
 cd csl-examples
 ```
 
+Install modules.
+
+```sh
+npm install
+```
+
 Run a example.
 
 ```sh
