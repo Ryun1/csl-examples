@@ -2,112 +2,47 @@ import { entropyToMnemonic } from 'bip39';
 import { Buffer } from 'buffer';
 import {
     Bip32PrivateKey,
+    Address,
+    Credential,
+    make_vkey_witness,
+    TransactionHash,
+    EnterpriseAddress,
     BaseAddress,
-    RewardAddress,
-    Credential
 } from "@emurgo/cardano-serialization-lib-nodejs";
+import { PrivateKey } from '@emurgo/cardano-serialization-lib-nodejs';
+
 
 // Constants
-const entropy = '00000000000000000000000000000000';
-const mnemonic = entropyToMnemonic(entropy);
-const accountIndex = 0;
-const keyIndex = 0;
-const networkTag = 0;
+const privateKeyHex = '105d2ef2192150655a926bca9cccf5e2f6e496efa9580508192e1f4a790e6f53de06529129511d1cacb0664bcf04853fdc0055a47cc6d2c6d205127020760652';
+const messageToSignHex = '';
+const networkTag = 1; // 1 for mainnet, 0 for testnet
 
 // ########### Keys ###########
 
-// Following CIP-1852
+// Create public key from private key
+const privateKey = PrivateKey.from_hex(privateKeyHex);
+const publicKey = privateKey.to_public();
 
-// Generate root key
-const rootKey = Bip32PrivateKey.from_bip39_entropy(
-    Buffer.from(entropy, 'hex'),
-    Buffer.from('')
-);
+// Create enterprise address
+const credential = Credential.from_keyhash(publicKey.hash());
+const address = (EnterpriseAddress.new(networkTag, credential)).to_address();
 
-// Helper function to harden a number
-const harden = (num) => {
-    return 0x80000000 + num;
-};
+// ########### Signing ###########
 
-// Derive account level key, according to CIP-1852
-const accountKey = rootKey.derive(harden(1852)) // purpose
-                        .derive(harden(1815)) // coin type
-                        .derive(harden(parseInt(accountIndex))); // account
+const signature = privateKey.sign(Buffer.from(messageToSignHex, 'hex'));
 
-// Derive address level keys
+// ########### Output ###########
 
-// Private keys
-// derive role and address index
-const paymentPrivKey = accountKey.derive(0).derive(keyIndex).to_raw_key();
-const stakePrivKey = accountKey.derive(2).derive(keyIndex).to_raw_key();
-const dRepPrivKey = accountKey.derive(3).derive(keyIndex).to_raw_key();
-const ccColdPrivKey = accountKey.derive(4).derive(keyIndex).to_raw_key();
-const ccHotPrivKey = accountKey.derive(5).derive(keyIndex).to_raw_key();
-
-// Create public keys from private keys
-const paymentPubKey = paymentPrivKey.to_public();
-const stakePubKey = stakePrivKey.to_public();
-const dRepPubKey = dRepPrivKey.to_public();
-const ccColdPubKey = ccColdPrivKey.to_public();
-const ccHotPubKey = ccHotPrivKey.to_public();
-
-// Create data from keys
-
-// Credentials
-const paymentCredential = Credential.from_keyhash(paymentPubKey.hash());
-const stakeCredential = Credential.from_keyhash(stakePubKey.hash());
-
-// Payment address
-const baseAddress = BaseAddress.new(networkTag, paymentCredential, stakeCredential);
-const paymentAddressBech32 = baseAddress.to_address().to_bech32();
-const paymentAddressHex = baseAddress.to_address().to_hex();
-
-// Stake/ Rewards address
-// Described via CIP-11 (https://github.com/cardano-foundation/CIPs/tree/master/CIP-0011)
-// Bech32 encoding prefix defined via CIP-05 (https://github.com/cardano-foundation/CIPs/tree/master/CIP-0005)
-const stakeAddressBech32 = (RewardAddress.new(networkTag, stakeCredential)).to_address().to_bech32();
-const stakeAddressHex =(RewardAddress.new(networkTag, stakeCredential)).to_address().to_hex();
-
-// DRep ID
-// Described via CIP-105 (https://github.com/cardano-foundation/CIPs/tree/master/CIP-0105)
-// Bech32 encoding prefix defined via CIP-05 (https://github.com/cardano-foundation/CIPs/tree/master/CIP-0005)
-const dRepIdBech32 = dRepPubKey.hash().to_bech32('drep');
-const dRepIdHex = dRepPubKey.hash().to_hex();
-
-console.log('\n=== CIP-1852 Keys ===');
-console.log('From mnemonic:', mnemonic);
-console.log('For account index:', accountIndex);
-
-console.log('\n> Payment keys');
-console.log('Payment private key (hex):', paymentPrivKey.to_hex());
-console.log('Payment public key (hex):', paymentPubKey.to_hex());
-
-console.log('\n> Stake keys');
-console.log('Stake private key (hex):', stakePrivKey.to_hex());
-console.log('Stake public key (hex):', stakePubKey.to_hex());
-
-console.log('\n> DRep keys');
-console.log('DRep private key (hex):', dRepPrivKey.to_hex());
-console.log('DRep public key (hex):', dRepPubKey.to_hex());
-
-console.log('\n> Constitutional Committee Cold keys');
-console.log('CC cold private key (hex):', ccColdPrivKey.to_hex());
-console.log('CC cold public key (hex):', ccColdPubKey.to_hex());
-
-console.log('\n> Constitutional Committee Hot keys');
-console.log('CC hot private key (hex):', ccHotPrivKey.to_hex());
-console.log('CC hot public key (hex):', ccHotPubKey.to_hex());
-
-console.log('\n=== From keys create associated data ===');
-
-console.log('\n> Payment Address (network tag + payment pub key hash + stake pub key hash)');
-console.log('Payment Address (Bech32 encoded):', paymentAddressBech32);
-console.log('Payment Address (Hex):', paymentAddressHex)
-
-console.log('\n> Stake (rewards) Address (network tag + stake pub key hash)');
-console.log('Stake Address (Bech32 encoded):', stakeAddressBech32);
-console.log('Stake Address (Hex):', stakeAddressHex);
-
-console.log('\n> DRep ID (DRep key hash)');
-console.log('DRep ID (Bech32 encoded):', dRepIdBech32);
-console.log('DRep ID (Hex):', dRepIdHex);
+console.log('\n=== CIP-136 Test Vectors ===');
+// describe the constants used
+console.log('Using private key (hex):', privateKeyHex);
+console.log('Public key (hex):', publicKey.to_hex());
+console.log('Network tag:', networkTag);
+console.log('Message to sign (hex):', messageToSignHex);
+// address
+console.log('\n> Enterprise Address');
+console.log('Address (Bech32):', address.to_bech32());
+console.log('Address (hex):', address.to_hex());
+// signature
+console.log('\n> Signature');
+console.log('Signature (hex):', signature.to_hex());
