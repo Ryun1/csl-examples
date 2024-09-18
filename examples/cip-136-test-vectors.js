@@ -1,16 +1,9 @@
-import { entropyToMnemonic } from 'bip39';
 import { Buffer } from 'buffer';
 import {
-    Bip32PrivateKey,
-    Address,
+    PrivateKey,
     Credential,
-    make_vkey_witness,
-    TransactionHash,
     EnterpriseAddress,
-    BaseAddress,
 } from "@emurgo/cardano-serialization-lib-nodejs";
-import { PrivateKey } from '@emurgo/cardano-serialization-lib-nodejs';
-
 
 // Constants
 const privateKeyHex = '105d2ef2192150655a926bca9cccf5e2f6e496efa9580508192e1f4a790e6f53de06529129511d1cacb0664bcf04853fdc0055a47cc6d2c6d205127020760652';
@@ -35,9 +28,12 @@ const signature = privateKey.sign(Buffer.from(messageToSignHex, 'hex'));
 
 console.log('\n=== CIP-136 Test Vectors ===');
 // describe the constants used
+console.log('\n> Constants');
 console.log('Using private key (hex):', privateKeyHex);
-console.log('Public key (hex):', publicKey.to_hex());
 console.log('Network tag:', networkTag);
+console.log()
+
+console.log('Public key (hex):', publicKey.to_hex());
 console.log('Message to sign (hex):', messageToSignHex);
 // address
 console.log('\n> Enterprise Address');
