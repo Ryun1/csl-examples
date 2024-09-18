@@ -72,7 +72,7 @@ const stakeAddressHex =(RewardAddress.new(networkTag, stakeCredential)).to_addre
 // Described via CIP-105 (https://github.com/cardano-foundation/CIPs/tree/master/CIP-0105)
 // Bech32 encoding prefix defined via CIP-05 (https://github.com/cardano-foundation/CIPs/tree/master/CIP-0005)
 const dRepIdBech32 = dRepPubKey.hash().to_bech32('drep');
-const dRepIdHex = dRepPubKey.hash().to_hex('drep');
+const dRepIdHex = dRepPubKey.hash().to_hex();
 
 console.log('\n=== CIP-1852 Keys ===');
 console.log('From mnemonic:', mnemonic);
@@ -102,7 +102,7 @@ console.log('\n=== From keys create associated data ===');
 
 console.log('\n> Payment Address (network tag + payment pub key hash + stake pub key hash)');
 console.log('Payment Address (Bech32 encoded):', paymentAddressBech32);
-console.log('Payment Address (Hex)',paymentAddressHex)
+console.log('Payment Address (Hex):', paymentAddressHex)
 
 console.log('\n> Stake (rewards) Address (network tag + stake pub key hash)');
 console.log('Stake Address (Bech32 encoded):', stakeAddressBech32);
