@@ -25,6 +25,6 @@ jobs:
     - run: npm ci
     - name: Run all examples
       run: |
-        for file in examples/*.js; do
+        find examples -name '*.js' -type f | while read file; do
           node "$file"
         done
