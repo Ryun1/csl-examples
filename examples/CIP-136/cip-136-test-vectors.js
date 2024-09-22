@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import {Jsonld} from 'jsonld';
 import {
     PrivateKey,
     Credential,
@@ -10,6 +11,8 @@ const privateKeyHex = '105d2ef2192150655a926bca9cccf5e2f6e496efa9580508192e1f4a7
 const messageToSignHex = '';
 const networkTag = 1; // 1 for mainnet, 0 for testnet
 
+const pathToMetadataDocument = './cip-136-test-vectors.jsonld';
+
 // ########### Keys ###########
 
 // Create public key from private key
@@ -19,6 +22,22 @@ const publicKey = privateKey.to_public();
 // Create enterprise address
 const credential = Credential.from_keyhash(publicKey.hash());
 const address = (EnterpriseAddress.new(networkTag, credential)).to_address();
+
+// ########### JSONLD ###########
+
+const doc = {
+    "http://schema.org/name": "Manu Sporny",
+    "http://schema.org/url": {"@id": "http://manu.sporny.org/"},
+    "http://schema.org/image": {"@id": "http://manu.sporny.org/images/manu.png"}
+};
+
+const context = {
+    "name": "http://schema.org/name",
+    "homepage": {"@id": "http://schema.org/url", "@type": "@id"},
+    "image": {"@id": "http://schema.org/image", "@type": "@id"}
+};
+
+const nquads = await jsonld.toRDF(doc, {format: 'application/n-quads'});
 
 // ########### Signing ###########
 

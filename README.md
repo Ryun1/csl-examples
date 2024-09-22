@@ -15,9 +15,13 @@ Further, we show how these keys can be used to create addresses and DRep IDs.
 
 WIP
 
-### [CIP-105 Conway Era Keys](./examples/CIP-105/cip-105-test-vectors.js)
+### [CIP-105 Conway Era Keys - Test Vectors](./examples/CIP-105/cip-105-test-vectors.js)
 
-In this example we make extensive test vectors for [CIP-105](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0105).
+In this example we make test vectors for [CIP-105](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0105).
+
+### [CIP-136 CC Vote Rationale - Test Vectors](./examples/CIP-136/cip-136-test-vectors.js)
+
+In this example we make test vectors for [CIP-136](https://github.com/cardano-foundation/CIPs/tree/master/CIP-0136).
 
 ## To run examples
 
