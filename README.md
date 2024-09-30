@@ -1,6 +1,6 @@
 # CSL Javascript Examples Repo
 
-This repository contains example implementations of Cardano specific logic, using the Javascript libraries of [Cardano Serialization Lib](https://github.com/Emurgo/cardano-serialization-lib).
+This repository contains example implementations of Cardano specific logic, using the Javascript libraries of [Cardano Serialization Library (CSL)](https://github.com/Emurgo/cardano-serialization-lib).
 
 CSL Version: [`12.1.0`](https://www.npmjs.com/package/@emurgo/cardano-serialization-lib-nodejs/v/12.1.0)
 
