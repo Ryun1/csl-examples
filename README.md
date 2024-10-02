@@ -42,5 +42,5 @@ npm install
 Run a example.
 
 ```sh
-node examples/cip-1852-keys.js
+node examples/CIP-1852/cip-1852-keys.js
 ```
