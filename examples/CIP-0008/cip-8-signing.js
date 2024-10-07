@@ -1,12 +1,7 @@
-import { entropyToMnemonic } from 'bip39';
 import { Buffer } from 'buffer';
 import {
     PrivateKey,
-    Bip32PrivateKey,
-    Address,
     Credential,
-    make_vkey_witness,
-    TransactionHash,
     EnterpriseAddress,
 } from "@emurgo/cardano-serialization-lib-nodejs";
 import {
