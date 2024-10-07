@@ -1,22 +1,24 @@
 import { Buffer } from 'buffer';
-import {Jsonld} from 'jsonld';
+import pkg from 'jsonld';
 import {
     PrivateKey,
     Credential,
     EnterpriseAddress,
 } from "@emurgo/cardano-serialization-lib-nodejs";
+import { blake2b } from 'blakejs';
+import fs from 'fs/promises';
+
+const { toRDF } = pkg;
 
 // Constants
-const privateKeyHex = '105d2ef2192150655a926bca9cccf5e2f6e496efa9580508192e1f4a790e6f53de06529129511d1cacb0664bcf04853fdc0055a47cc6d2c6d205127020760652';
-const messageToSignHex = '';
+const authorPrivateKeyHex = '105d2ef2192150655a926bca9cccf5e2f6e496efa9580508192e1f4a790e6f53de06529129511d1cacb0664bcf04853fdc0055a47cc6d2c6d205127020760652';
 const networkTag = 1; // 1 for mainnet, 0 for testnet
-
-const pathToMetadataDocument = './cip-136-test-vectors.jsonld';
+const pathToMetadataDocument = './examples/CIP-136/treasury-withdrawal-unconstitutional.jsonld';
 
 // ########### Keys ###########
 
-// Create public key from private key
-const privateKey = PrivateKey.from_hex(privateKeyHex);
+// Create private and public keys
+const privateKey = PrivateKey.from_hex(authorPrivateKeyHex);
 const publicKey = privateKey.to_public();
 
 // Create enterprise address
@@ -25,39 +27,56 @@ const address = (EnterpriseAddress.new(networkTag, credential)).to_address();
 
 // ########### JSONLD ###########
 
-const doc = {
-    "http://schema.org/name": "Manu Sporny",
-    "http://schema.org/url": {"@id": "http://manu.sporny.org/"},
-    "http://schema.org/image": {"@id": "http://manu.sporny.org/images/manu.png"}
-};
+// Load JSON-LD document
+async function loadJSONLD(path) {
+    const data = await fs.readFile(path, 'utf8');
+    return JSON.parse(data);
+}
 
-const context = {
-    "name": "http://schema.org/name",
-    "homepage": {"@id": "http://schema.org/url", "@type": "@id"},
-    "image": {"@id": "http://schema.org/image", "@type": "@id"}
-};
+// Convert body to N-Quads and hash it
+async function hashJSONLDBody(doc) {
+    const body = doc.body;
 
-const nquads = await jsonld.toRDF(doc, {format: 'application/n-quads'});
+    // Convert body to N-Quads format
+    const nquadsBody = await toRDF(body, { format: 'application/n-quads' });
 
-// ########### Signing ###########
+    // Hash the N-Quads string using Blake2b (256-bit)
+    const hash = blake2b(Buffer.from(nquadsBody), null, 32); // 32 bytes for 256-bit hash
+    return Buffer.from(hash).toString('hex');
+}
 
-const signature = privateKey.sign(Buffer.from(messageToSignHex, 'hex'));
+// Load the JSON-LD document
+const doc = await loadJSONLD(pathToMetadataDocument);
 
-// ########### Output ###########
+// Hash the body of the JSON-LD document
+const hashedBody = await hashJSONLDBody(doc);
 
+// Sign the body with the author's private key
+const signature = privateKey.sign(Buffer.from(hashedBody, 'hex'));
+
+// Add the witness section to the JSON-LD document
+doc.authors[0].witness.signature = signature.to_hex();
+doc.authors[0].witness.publicKey = publicKey.to_hex();
+
+// Final hash of complete document
+const finalDocHash = blake2b(Buffer.from(JSON.stringify(doc)), null, 32); // 32 bytes for 256-bit hash
+
+// Output the data
 console.log('\n=== CIP-136 Test Vectors ===');
-// describe the constants used
 console.log('\n> Constants');
-console.log('Using private key (hex):', privateKeyHex);
+console.log("Using author's private key (hex):", authorPrivateKeyHex);
 console.log('Network tag:', networkTag);
-console.log()
+console.log('Path to JSON doc:', pathToMetadataDocument);
 
-console.log('Public key (hex):', publicKey.to_hex());
-console.log('Message to sign (hex):', messageToSignHex);
-// address
-console.log('\n> Enterprise Address');
+console.log('\n> Public info');
+console.log("Author's Public key (hex):", publicKey.to_hex());
 console.log('Address (Bech32):', address.to_bech32());
 console.log('Address (hex):', address.to_hex());
-// signature
-console.log('\n> Signature');
-console.log('Signature (hex):', signature.to_hex());
+
+console.log('\n> JSON-LD Document');
+console.log('Canonized and hashed body (hex):', hashedBody);
+console.log("Author's Signature over the hashed body (hex):", signature.to_hex());
+console.log('Final hash of the complete document (hex):', Buffer.from(finalDocHash).toString('hex'));
+
+console.log('\nUpdated JSON-LD Document');
+console.log(JSON.stringify(doc, null, 2));
