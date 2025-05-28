@@ -19,7 +19,6 @@ import {
 } from "@emurgo/cardano-message-signing-nodejs"
 
 // Constants
-// Constants
 const privateKeyHex = '105d2ef2192150655a926bca9cccf5e2f6e496efa9580508192e1f4a790e6f53de06529129511d1cacb0664bcf04853fdc0055a47cc6d2c6d205127020760652';
 const networkTag = 0;
 const messageToSign = 'cc4ab8ead604ddb498ed4b2916af7b454c65ac783b5d836fddf388e72a40eccb'
@@ -36,7 +35,7 @@ const address = (EnterpriseAddress.new(networkTag, credential)).to_address();
 
 // ########### Witnesses ###########
 
-// Do a normal ED25519 signature, for comparison
+// Do a normal Ed25519 signature, for comparison
 const ed25519Signature = privateKey.sign(Buffer.from(messageToSign, 'hex'));
 
 // CIP-0008 Message signing
@@ -108,4 +107,4 @@ console.log('Enterprise address (hex):', address.to_hex());
 
 console.log('\nSignatures')
 console.log('Ed25519:', ed25519Signature.to_hex());
-console.log('CIP-0005:', coseSig);
+console.log('CIP-0008:', coseSig);
