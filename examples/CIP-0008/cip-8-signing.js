@@ -3,6 +3,7 @@ import {
     PrivateKey,
     Credential,
     EnterpriseAddress,
+    Ed25519Signature,
 } from "@emurgo/cardano-serialization-lib-nodejs";
 import {
     HeaderMap,
@@ -90,7 +91,20 @@ key.set_header(
     CBORValue.new_bytes(publicKey.as_bytes())
 );
 
-const coseSig = Buffer.from(coseSign1.to_bytes()).toString('hex')
+const coseSigString = Buffer.from(coseSign1.to_bytes()).toString('hex')
+
+// The recipient can then verify the message back
+// Any user here should carefully inspect the headers / payload
+// to make sure they are verifying the correct sign object
+// (not shown here for simplicity)
+const payloadToVerify = coseSign1.payload();
+const headersToVerify = coseSign1.headers();
+// Reconstruct the SigStructure object so we can verify the signature
+const sigStructureBytes = coseSign1.signed_data().to_bytes();
+const signature = coseSign1.signature();
+
+// Verify the CIP-0008 signature
+const isCip8Valid = publicKey.verify(sigStructureBytes, Ed25519Signature.from_bytes(signature));
 
 // ########### Logs ###########
 
@@ -106,5 +120,9 @@ console.log('Network tag:', networkTag);
 console.log('Enterprise address (hex):', address.to_hex());
 
 console.log('\nSignatures')
+console.log('CIP-0008:', coseSigString);
 console.log('Ed25519:', ed25519Signature.to_hex());
-console.log('CIP-0008:', coseSig);
+
+console.log('\n Is signatures valid?');
+console.log('CIP-0008 (CoseSign1):', isCip8Valid);
+console.log('Ed25519:', publicKey.verify(Buffer.from(messageToSign, 'hex'), ed25519Signature));
